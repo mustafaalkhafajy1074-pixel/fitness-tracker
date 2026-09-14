@@ -25,11 +25,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flet
+          pip install "flet[all]"
 
       - name: Build APK
         run: |
-          yes | flet build apk --project . tracker.py
+          flet build apk --project . -v -y
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
