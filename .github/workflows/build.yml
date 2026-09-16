@@ -31,18 +31,9 @@ jobs:
         run: |
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
 
-      - name: Patch Code and Build APK
+      - name: Build APK
         run: |
           cp tracker.py main.py
-          python3 -c "
-          import re
-          with open('main.py', 'r', encoding='utf-8') as f:
-              code = f.read()
-          code = re.sub(r'(ft|flet)\.app\s*\(.*?\)', r'(\1.run if hasattr(\1, \"run\") else \1.app)(main)', code)
-          with open('main.py', 'w', encoding='utf-8') as f:
-              f.write(code)
-          "
-          python3 -m py_compile main.py
           echo "y" | flet build apk
 
       - name: Upload APK
