@@ -174,7 +174,5 @@ def main(page: ft.Page):
     update_history()
 
 if __name__ == "__main__":
-    if hasattr(ft, "run"):
     ft.run(main)
-else:
-    ft.app(target=main)
+    
