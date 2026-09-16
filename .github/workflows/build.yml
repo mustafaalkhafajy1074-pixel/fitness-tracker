@@ -29,19 +29,20 @@ jobs:
 
       - name: Accept Android SDK Licenses
         run: |
-          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || yes | sdkmanager --licenses || true
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
 
-      - name: Prepare code and Build APK
+      - name: Patch Code and Build APK
         run: |
           cp tracker.py main.py
-          python -c "
+          python3 -c "
+          import re
           with open('main.py', 'r', encoding='utf-8') as f:
               code = f.read()
-          code = code.replace('ft.app(target=main)', 'if hasattr(ft, \"run\"): ft.run(main)\nelse: ft.app(target=main)')
-          code = code.replace('flet.app(target=main)', 'if hasattr(flet, \"run\"): flet.run(main)\nelse: flet.app(target=main)')
+          code = re.sub(r'(ft|flet)\.app\s*\(.*?\)', r'(\1.run if hasattr(\1, \"run\") else \1.app)(main)', code)
           with open('main.py', 'w', encoding='utf-8') as f:
               f.write(code)
           "
+          python3 -m py_compile main.py
           echo "y" | flet build apk
 
       - name: Upload APK
